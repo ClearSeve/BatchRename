@@ -101,7 +101,7 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
-
+	
 	CRect rc;
 	GetClientRect(&rc);
 
@@ -110,7 +110,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 		return FALSE;
 
 	if (!m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CBatchRenameFileView), CSize(rc.Width() / 3, rc.Height()), pContext) ||
-		!m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CBatchRenameFileView), CSize(rc.Width() / 3, rc.Height()), pContext))
+		!m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CChildView), CSize(rc.Width() / 3, rc.Height()), pContext))
 	{
 		m_wndSplitter.DestroyWindow();
 		return FALSE;
