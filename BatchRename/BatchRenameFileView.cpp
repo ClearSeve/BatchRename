@@ -23,13 +23,12 @@ CBatchRenameFileView::~CBatchRenameFileView()
 void CBatchRenameFileView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ADDFILEBUT, m_wndAddFile);
-	DDX_Control(pDX, IDC_TREEFILE, m_wndFileTree);
+	DDX_Control(pDX, IDC_LISTFILE, m_wndFileList);
 }
 
 BEGIN_MESSAGE_MAP(CBatchRenameFileView, CFormView)
-	ON_BN_CLICKED(IDC_ADDFILEBUT, &CBatchRenameFileView::OnBnClickedAddfilebut)
-	ON_WM_CREATE()
+	ON_WM_SIZE()
+	ON_NOTIFY(LVN_GETDISPINFO, IDC_LISTFILE, &CBatchRenameFileView::OnLvnGetdispinfoListfile)
 END_MESSAGE_MAP()
 
 
@@ -53,62 +52,94 @@ void CBatchRenameFileView::Dump(CDumpContext& dc) const
 // CBatchRenameFileView 消息处理程序
 
 
-// 增加文件按钮事件
-void CBatchRenameFileView::OnBnClickedAddfilebut()
-{
-	TCHAR szFolderPath[MAX_PATH] = { 0 };
-	CString strFolderPath;
-
-	BROWSEINFO sInfo;
-	::ZeroMemory(&sInfo, sizeof(BROWSEINFO));
-	sInfo.pidlRoot = 0;
-	sInfo.lpszTitle = _T("请选择处理结果存储路径");
-	sInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_EDITBOX | BIF_DONTGOBELOWDOMAIN;
-	sInfo.lpfn = NULL;
-
-	// 显示文件夹选择对话框  
-	LPITEMIDLIST lpidlBrowse = ::SHBrowseForFolder(&sInfo);
-	if (lpidlBrowse != NULL)
-	{
-		// 取得文件夹名  
-		if (::SHGetPathFromIDList(lpidlBrowse, szFolderPath))
-		{
-			strFolderPath = szFolderPath;
-		}
-	}
-	if (lpidlBrowse != NULL)
-	{
-		::CoTaskMemFree(lpidlBrowse);
-	}
-
-}
-
-
-
-int CBatchRenameFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
-{
-	if (CFormView::OnCreate(lpCreateStruct) == -1)
-		return -1;
-
-
-
-
-	return 0;
-}
-
 
 void CBatchRenameFileView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
+	if (TRUE == m_bIsInit)
+		return;
 
-	HTREEITEM hRoot;
-	hRoot = m_wndFileTree.InsertItem(_T("111111"));
+	m_bIsInit = TRUE;
+
+	//m_imageFileList.Create(16, 16, ILC_COLOR32, 10, 1);
+	//m_imageFileList.Add(getFolderIcon());
+
+
+	m_wndFileList.InsertColumn(0, _T("文件名"), LVCFMT_LEFT, 200);
+	m_wndFileList.InsertColumn(1, _T("替换后"), LVCFMT_LEFT, 100);
+	m_wndFileList.InsertColumn(2, _T("大小"), LVCFMT_LEFT, 100);
+	m_wndFileList.InsertColumn(3, _T("类型"), LVCFMT_LEFT, 100);
+	m_wndFileList.InsertColumn(4, _T("路径"), LVCFMT_LEFT, 500);
+	m_wndFileList.InsertColumn(5, _T("状态"), LVCFMT_LEFT, 50);
+
+	//m_wndFileList.SetImageList(&m_imageFileList, LVSIL_SMALL);
+
+	m_wndFileList.SetExtendedStyle(m_wndFileList.GetExtendedStyle() | LVS_EX_SUBITEMIMAGES);
+
+
+	//fileTraversal(m_vFilePathList, _T("C:\\Users\\ClearSeve\\Desktop\\AIUIChatDemo\\"));
+	//for (UINT i = 0; i < m_vFilePathList.size(); ++i)
+	//{
+	//	UINT nImageId = findImageFileLis(m_vFilePathList.at(i).strType);
+	//	UINT nItem = m_wndFileList.InsertItem(0, m_vFilePathList.at(i).strName, nImageId);
+	//	//
+	//	//m_wndFileList.SetItemText(nItem, 3, vFilePathList.at(i).strType);
+	//	//m_wndFileList.SetItemText(nItem, 4, vFilePathList.at(i).strPath);
+	//}
+
+	// 设置数量
+	//m_wndFileList.SetItemCount(m_vFilePathList.size());
+
+
 }
 
 
-void CBatchRenameFileView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
+void CBatchRenameFileView::OnSize(UINT nType, int cx, int cy)
 {
-	
+	CFormView::OnSize(nType, cx, cy);
+	if (m_bIsInit)
+	{
+		m_wndFileList.SetWindowPos(NULL, 0, 0, cx + 1, cy + 1, SWP_NOMOVE);
 
+	}
+}
+
+
+
+void CBatchRenameFileView::OnLvnGetdispinfoListfile(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	NMLVDISPINFO *pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+	LV_DISPINFO* pDispInfo1 = (LV_DISPINFO*)pNMHDR;
+	LV_ITEM* pItem = &(pDispInfo1)->item;
+	int iItemIndex = pItem->iItem;
+	if (pDispInfo1->item.mask & LVIF_TEXT)
+	{
+		//switch (pItem->iSubItem)
+		//{
+		//case 0://第0列
+		//	lstrcpy(pItem->pszText, m_vFilePathList.at(pItem->iItem).strName);
+		//	//m_wndFileList.SetItemText(nItem, 3, );
+		//	pItem->iImage = 0;
+		//	break;
+		//case 1: //第一列
+		//	
+		//	break;
+		//case 3:
+		//	lstrcpy(pItem->pszText, m_vFilePathList.at(pItem->iItem).strType);
+		//	break;
+		//case 4:
+		//	lstrcpy(pItem->pszText, m_vFilePathList.at(pItem->iItem).strPath);
+		//	break;
+		//}
+	}
+	
+	// 错误
+	//if (pDispInfo1->item.mask & LVIF_IMAGE)
+	//{
+	//	pItem->iImage = 0;
+	//}
+
+
+	*pResult = 0;
 }

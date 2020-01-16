@@ -7,7 +7,8 @@
 
 #include "MainFrm.h"
 
-#include "BatchRenameFileView.h"
+#include "OperatorView.h"
+#include "SelectFolderDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -20,6 +21,7 @@ IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_WM_SETFOCUS()
+	ON_COMMAND(ID_SELECTFOLDER, &CMainFrame::OnSelectfolder)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -51,14 +53,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TRACE0("未能创建状态栏\n");
 		return -1;      // 未能创建
 	}
-	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
-
+	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators) / sizeof(UINT));
+	
 	return 0;
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	if( !CFrameWnd::PreCreateWindow(cs) )
+	if (!CFrameWnd::PreCreateWindow(cs))
 		return FALSE;
 	// TODO:  在此处通过修改
 	//  CREATESTRUCT cs 来修改窗口类或样式
@@ -93,6 +95,8 @@ void CMainFrame::OnSetFocus(CWnd* /*pOldWnd*/)
 
 BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
+
+
 	// 否则，执行默认处理
 	return CFrameWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
@@ -101,19 +105,41 @@ BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO*
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
-	
+
 	CRect rc;
 	GetClientRect(&rc);
 
 	//将窗口分为三列一行
-	if (!m_wndSplitter.CreateStatic(this, 1, 2))
+	if (!m_wndSplitter.CreateStatic(this, 2, 1))
 		return FALSE;
 
-	if (!m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CBatchRenameFileView), CSize(rc.Width() / 3, rc.Height()), pContext) ||
-		!m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CChildView), CSize(rc.Width() / 3, rc.Height()), pContext))
+	if (m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(COperatorView), CSize(100, 100), pContext) == FALSE ||
+		m_wndSplitter.CreateView(1, 0, RUNTIME_CLASS(CBatchRenameFileView), CSize(100, 100), pContext) == FALSE)
 	{
 		m_wndSplitter.DestroyWindow();
 		return FALSE;
 	}
+
+
+	m_pWndBatchRenameFileView = (CBatchRenameFileView*)m_wndSplitter.GetPane(0, 0);
+
+
+	//CSelectFolderDialog selectFolderDialog;
+	//selectFolderDialog.DoModal();
+	//
 	return TRUE;
+}
+
+
+void CMainFrame::OnSelectfolder()
+{
+	//m_pWndBatchRenameFileView->PostMessage()
+	CSelectFolderDialog selectFolderDialog;
+	if (selectFolderDialog.DoModal() != IDOK)
+		return;
+
+	
+
+
+
 }

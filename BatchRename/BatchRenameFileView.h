@@ -3,7 +3,6 @@
 #include "afxcmn.h"
 
 
-
 // CBatchRenameFileView 窗体视图
 
 class CBatchRenameFileView : public CFormView
@@ -22,21 +21,22 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 #endif
+public:
+
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
-
+	BOOL m_bIsInit = FALSE;
 	DECLARE_MESSAGE_MAP()
 public:
-	CButton m_wndAddFile;
 	afx_msg void OnBnClickedAddfilebut();
-	CTreeCtrl m_wndFileTree;
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	virtual void OnInitialUpdate();
-	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/);
+	CListCtrl m_wndFileList;
 
-
-
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnLvnGetdispinfoListfile(NMHDR *pNMHDR, LRESULT *pResult);
 };
+
+
 
 

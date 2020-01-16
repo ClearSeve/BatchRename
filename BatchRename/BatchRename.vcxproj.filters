@@ -39,6 +39,15 @@
     <ClInclude Include="BatchRenameFileView.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="OperatorView.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectFolderDialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileListData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BatchRename.cpp">
@@ -54,6 +63,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="BatchRenameFileView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="OperatorView.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectFolderDialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileListData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
